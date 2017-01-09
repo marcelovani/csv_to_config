@@ -1,96 +1,57 @@
 <?php
 /**
  * @file
- * Contains Drupal\csv_to_config\Form\BackupDeleteForm
+ * Contains Drupal\csv_to_config\Form\CSVImportForm
  */
-
 
 namespace Drupal\csv_to_config\Form;
 
-use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-class CSVImportForm extends ConfirmFormBase {
+class CSVImportForm extends FormBase {
 
   /**
-   * @var Destination
+   * {@inheritdoc}
    */
-  var $destination;
-
-  /**
-   * @var string
-   */
-  var $backup_id;
-
-  /**
-   * Returns the question to ask the user.
-   *
-   * @return string
-   *   The form question. The page title will be set to this value.
-   */
-  public function getQuestion() {
-    return $this->t('Are you sure you want to restore this backup?');
+  public function getFormId() {
+    return 'csv_to_config_import_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText() {
-    return $this->t('Restore');
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form = array();
+
+    $form['csv_upload'] = array(
+      '#title' => t('Upload a CSV File'),
+      '#type' => 'file',
+      '#description' => t('Select the CSV file that you want to convert to configuration.'),
+    );
+
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Continue'),
+      '#weight' => 1,
+    );
+
+    return $form;
   }
 
   /**
-   * Returns the route to go to if the user cancels the action.
-   *
-   * @return \Drupal\Core\Url
-   *   A URL object.
+   * {@inheritdoc}
    */
-  public function getCancelUrl() {
-    return $this->destination->toUrl('backups');
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
   }
 
   /**
-   * Returns a unique string identifying the form.
-   *
-   * @return string
-   *   The unique string identifying the form.
-   */
-  public function getFormId() {
-    return 'csv_to_config_backup_restore_confirm';
-  }
-
-  /**
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param null $csv_to_config_destination
-   * @param null $backup_id
-   * @return array
-   */
-  public function buildForm(array $form, FormStateInterface $form_state, $csv_to_config_destination = NULL, $backup_id = NULL) {
-    $this->destination = $csv_to_config_destination;
-    $this->backup_id = $backup_id;
-
-    $bam = csv_to_config_get_service_object();
-    $form['source_id'] = DrupalConfigHelper::getPluginSelector($bam->sources(), $this->t('Restore To'));
-
-    $conf_schema = $bam->plugins()->map('configSchema', array('operation' => 'restore'));
-    $form += DrupalConfigHelper::buildFormFromSchema($conf_schema, $bam->plugins()->config());
-
-    return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * Form submission handler.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $form_state->getValues();
-    csv_to_config_perform_restore($config['source_id'], $this->destination->id(), $this->backup_id, $config);
-
-    $form_state->setRedirectUrl($this->getCancelUrl());
+    //backup_migrate_perform_restore($config['source_id'], 'upload', 'backup_migrate_restore_upload', $config);
   }
+
 }
