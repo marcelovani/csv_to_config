@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * csv_to_config module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function csv_to_config_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.csv_to_config':
+      $output = '';
+      $output .= '<p>' . t('Visit the admin UI, import the CSV file.') . '</p>';
+      return $output;
+      break;
+
+    default:
+  }
+}
