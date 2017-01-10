@@ -51,7 +51,7 @@ class CSVImportStep2Form extends MultistepFormBase {
       '#size' => 60,
       '#maxlength' => 128,
       '#required' => TRUE,
-      '#description' => t('Configuration name.'),
+      '#description' => t('The key to store the configuration. You can use replacement tokens to use values from the CSV. Example: domain.config.[site_machine_me].config_token.tokens'),
     );
 
     $form['actions']['previous'] = array(
@@ -104,8 +104,8 @@ class CSVImportStep2Form extends MultistepFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->store->set('file', $form_state->getValue('file'));
-    $this->store->set('file_contents', $form_state->getValue('file_contents'));
+//    $this->store->set('file', $form_state->getValue('file'));
+//    $this->store->set('file_contents', $form_state->getValue('file_contents'));
 
     // Save the data
     parent::saveData();
