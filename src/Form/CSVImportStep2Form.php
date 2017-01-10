@@ -51,7 +51,7 @@ class CSVImportStep2Form extends MultistepFormBase {
       '#size' => 60,
       '#maxlength' => 128,
       '#required' => TRUE,
-      '#description' => t('The key to store the configuration. You can use replacement tokens to use values from the CSV. Example: domain.config.[site_machine_me].config_token.tokens'),
+      '#description' => t('The key to store the configuration. You can use 1 (one) replacement token to get the value from the CSV. Example: domain.config.[site_machine_me].config_token.tokens'),
     );
 
     $form['actions']['previous'] = array(
@@ -88,6 +88,45 @@ class CSVImportStep2Form extends MultistepFormBase {
         );
       }
 
+    }
+$config_name_value = 'domain.config.[site_machine_name].config_token.tokens';//@todo remove this
+//@todo test with wrong key
+//@todo test without token
+//
+    $configArray = array();
+    foreach ($tokenArray as $key => $values) {
+      $rowValues= array_filter($values);
+      if (empty($rowValues)) {
+        // Ignore rows with no values.
+        continue;
+      }
+      $i = 0;
+      foreach ($values as $column_key => $value) {
+        $configArray[$i][$key] = $value;
+        $i++;
+      }
+    }
+
+    // Get the config name ID from token if it exits.
+    $configNameId = NULL;
+    preg_match("/\\[(\\w+)\\]/", $config_name_value, $matches);
+    if (isset($matches[1])) {
+      $configNameId = $matches[1];
+    }
+    foreach ($configArray as $ckey => $values) {
+      if (isset($values[$configNameId])) {
+        if (empty($values[$configNameId])) {
+          continue;
+        }
+        $configName = str_replace('[' . $configNameId . ']', $values[$configNameId], $config_name_value);
+        unset($values[$configNameId]);
+      }
+
+      $configObj = \Drupal::service('config.factory')->getEditable($configName);
+      foreach ($values as $key => $value) {
+        $configObj->set($key, $value);
+      }
+      $configObj->save();
     }
 
     return $form;
