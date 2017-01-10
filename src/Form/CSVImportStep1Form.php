@@ -23,6 +23,10 @@ class CSVImportStep1Form extends MultistepFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
+    $form['heading'] = array(
+      '#markup' => '<h2>' . t('Step 1 of 3') . '</h2>',
+    );
+
     $form['csv_file'] = array(
       '#title' => t('Upload a CSV File'),
       '#type' => 'file',

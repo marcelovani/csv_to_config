@@ -30,9 +30,16 @@ class CSVImportStep3Form extends MultistepFormBase {
       $url = Url::fromRoute('csv_to_config.csv_import.step1')->toString();
       return new RedirectResponse($url);
     }
+    parent::deleteStore();
+
+    $form['heading'] = array(
+      '#markup' => '<h2>' . t('Step 3 of 3') . '</h2>',
+    );
 
     $form['text'] = array(
-      '#markup' => t('Done'),
+      '#markup' => t('Configurations saved. You can view the changes on the <a href=":url">Configuration synchronization</a> page.',
+        array(':url' => '/admin/config/development/configuration')
+      ),
     );
 
     $form['actions']['submit']['#value'] = $this->t('Start over');

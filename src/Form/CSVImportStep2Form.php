@@ -31,6 +31,10 @@ class CSVImportStep2Form extends MultistepFormBase {
       return new RedirectResponse($url);
     }
 
+    $form['heading'] = array(
+      '#markup' => '<h2>' . t('Step 2 of 3') . '</h2>',
+    );
+
     $form['config_name'] = array(
       '#title' => t('Configuration name'),
       '#type' => 'textfield',
@@ -149,8 +153,7 @@ class CSVImportStep2Form extends MultistepFormBase {
       $configObj->save();
     }
 
-    parent::deleteStore();
-    $form_state->setRedirect('csv_to_config.csv_import.step2');
+    $form_state->setRedirect('csv_to_config.csv_import.step3');
   }
 
 }
