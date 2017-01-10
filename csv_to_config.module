@@ -12,9 +12,37 @@ use Drupal\Core\Routing\RouteMatchInterface;
  */
 function csv_to_config_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
+    case 'csv_to_config.csv_import.step1':
+      $output = '';
+      $output .= '<p>' . t('Visit the <a href=":url">help page</a> for more explanation about the CSV format.', array(':url' => '/admin/help/csv_to_config')) . '</p>';
+      return $output;
+      break;
+
     case 'help.page.csv_to_config':
       $output = '';
-      $output .= '<p>' . t('Visit the admin UI, import the CSV file.') . '</p>';
+      $output .= '<p>' . t('Select a CSV file to be uploaded.') . '</p>';
+      $output .= '<p>' . t('Its advisable to export the CSV using quotes around values and comma as separator.') . '</p>';
+      $output .= '<p>' . t('The format of the rows is Key/Value e.g.') . '</p>';
+      $output .= '<pre>';
+      $output .= '"foo","bar"<br/>"foo2","bar2"';
+      $output .= '</pre>';
+      $output .= '<p>' . t('This will generate a yml file with this structure') . '</p>';
+      $output .= '<pre>';
+      $output .= 'foo: bar<br/>foo2: bar2';
+      $output .= '</pre>';
+      $output .= '<p>' . t('For multiple configurations, you can repeat the value many times e.g.') . '</p>';
+      $output .= '<pre>';
+      $output .= '"foo","bar,"boo"<br/>"foo2","bar2","boo2"';
+      $output .= '</pre>';
+      $output .= '<p>' . t('This will generate two yml files, with this structure') . '</p>';
+      $output .= '<pre>';
+      $output .= '<strong>file1.yml</strong><br/>';
+      $output .= 'foo: bar<br/>foo2: bar2';
+      $output .= '</pre>';
+      $output .= '<pre>';
+      $output .= '<strong>file2.yml</strong><br/>';
+      $output .= 'foo: boo<br/>foo2: boo2';
+      $output .= '</pre>';
       return $output;
       break;
 

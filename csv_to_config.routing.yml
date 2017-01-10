@@ -1,7 +1,17 @@
-csv_to_config.csv_import:
+csv_to_config.csv_import.step1:
   path: '/admin/config/development/csv_to_config/import/upload'
   defaults:
-    _form: '\Drupal\csv_to_config\Form\CSVImportForm'
+    _form: '\Drupal\csv_to_config\Form\CSVImportStep1Form'
+    _title: 'CSV to Config'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+csv_to_config.csv_import.step2:
+  path: '/admin/config/development/csv_to_config/import/config'
+  defaults:
+    _form: '\Drupal\csv_to_config\Form\CSVImportStep2Form'
     _title: 'CSV to Config'
   requirements:
     _permission: 'administer site configuration'
