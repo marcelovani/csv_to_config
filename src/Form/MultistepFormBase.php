@@ -79,18 +79,11 @@ abstract class MultistepFormBase extends FormBase {
   }
 
   /**
-   * Saves the data from the multistep form.
-   */
-  protected function saveData() {
-    $this->deleteStore();
-  }
-
-  /**
    * Helper method that removes all the keys from the store collection used for
    * the multistep form.
    */
   protected function deleteStore() {
-    $keys = ['file', 'csv_array'];
+    $keys = ['file', 'csv_array', 'csv_array_processed'];
     foreach ($keys as $key) {
       $this->store->delete($key);
     }

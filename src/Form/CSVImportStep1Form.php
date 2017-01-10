@@ -38,8 +38,8 @@ class CSVImportStep1Form extends MultistepFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $values = &$form_state->getValues();
-    $values['file_contents'] = '';
+    $formValues = &$form_state->getValues();
+    $formValues['file_contents'] = '';
 
     $validators = array('file_validate_extensions' => array('csv'));
     if ($file = file_save_upload('csv_file', $validators, FALSE, 0, FILE_EXISTS_REPLACE)) {
@@ -58,8 +58,8 @@ class CSVImportStep1Form extends MultistepFormBase {
         drupal_set_message(t('The verification file import failed, because the file %filename could not be read.', array('%filename' => $file->getFilename())), 'error');
       }
       else {
-        $values['file'] = $file->getFilename();
-        $values['csv_array'] = $csvArray;
+        $formValues['file'] = $file->getFilename();
+        $formValues['csv_array'] = $csvArray;
       }
     }
     else {
