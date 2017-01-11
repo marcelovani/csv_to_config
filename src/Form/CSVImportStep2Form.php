@@ -153,6 +153,14 @@ class CSVImportStep2Form extends MultistepFormBase {
       else {
         $configName = $formConfigName;
       }
+      $configName = trim($configName);
+
+      if (strpos($configName, '.', 0) === FALSE) {
+        drupal_set_message(t('Invalid name for configuration detected: %name',
+          array('%name' => $configName)), 'error'
+        );
+        return;
+      }
 
       $configObj = \Drupal::service('config.factory')->getEditable($configName);
       foreach ($values as $key => $value) {
