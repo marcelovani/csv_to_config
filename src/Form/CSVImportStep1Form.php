@@ -49,6 +49,7 @@ class CSVImportStep1Form extends MultistepFormBase {
     if ($file = file_save_upload('csv_file', $validators, FALSE, 0, FILE_EXISTS_REPLACE)) {
       $csv_file = fopen($file->getFileUri(), 'r+');
 
+      // Read CSV rows.
       $csvArray = array();
       while( $csvRow = fgetcsv($csv_file) ) {
         $key = array_shift($csvRow);

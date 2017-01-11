@@ -55,47 +55,52 @@ class CSVImportStep2Form extends MultistepFormBase {
       '#url' => Url::fromRoute('csv_to_config.csv_import.step1'),
     );
 
-    $limit = 3;
+    // Get array from store.
     $csvArray = $this->store->get('csv_array');
 
+    // Extract the keys.
     $columns = array_shift($csvArray);
-    $tokenArray = array();
+
+    // Prepare associative array.
+    $processedArray = array();
     foreach ($csvArray as $key => $csvRow) {
-      $tokenRow = array();
+      $processedRow = array();
 
       foreach ($csvRow as $i => $value) {
-        $tokenRow[$columns[$i]] = $value;
+        $processedRow[$columns[$i]] = $value;
       }
 
-      $tokenArray[$key] = $tokenRow;
+      $processedArray[$key] = $processedRow;
     }
+    $this->store->set('csv_array_processed', $processedArray);
 
+    // Limit table preview.
+    $limit = 3;
+
+    // Show table.
     $form['csv_contents'] = array(
       '#type' => 'table',
       '#caption' => $this->t('Rows (Limited results)'),
       '#header' => array_merge(['Key'], array_slice($columns, 0, $limit)),
     );
 
-    foreach ($tokenArray as $key => $values) {
-      $form['csv_contents'][$key]['#attributes'] = array('class' => array('foo', 'baz'));
-      $form['csv_contents'][$key]['token'] = array(
+    // Table rows.
+    foreach ($processedArray as $key => $values) {
+      $form['csv_contents'][$key]['value'] = array(
         '#markup' => $key,
-        '#title_display' => 'invisible',
       );
       $i = 0;
+      // Table columns.
       foreach ($values as $column_key => $value) {
         if ($i++ >= $limit) {
           break;
         }
         $form['csv_contents'][$key][$column_key] = array(
           '#markup' => $value,
-          '#title_display' => 'invisible',
         );
       }
 
     }
-
-    $this->store->set('csv_array_processed', $tokenArray);
 
     return $form;
   }
@@ -114,8 +119,7 @@ class CSVImportStep2Form extends MultistepFormBase {
     $formValues = &$form_state->getValues();
     $formConfigName = $formValues['config_name'];
 
-//@todo test with wrong key
-//@todo test without token
+    // Prepare config array.
     $configArray = array();
     foreach ($this->store->get('csv_array_processed') as $key => $values) {
       $rowValues= array_filter($values);
@@ -137,6 +141,7 @@ class CSVImportStep2Form extends MultistepFormBase {
       $configNameId = $matches[1];
     }
 
+    // Write the config(s).
     foreach ($configArray as $ckey => $values) {
       if (isset($values[$configNameId])) {
         if (empty($values[$configNameId])) {
@@ -144,6 +149,9 @@ class CSVImportStep2Form extends MultistepFormBase {
         }
         $configName = str_replace('[' . $configNameId . ']', $values[$configNameId], $formConfigName);
         unset($values[$configNameId]);
+      }
+      else {
+        $configName = $formConfigName;
       }
 
       $configObj = \Drupal::service('config.factory')->getEditable($configName);
